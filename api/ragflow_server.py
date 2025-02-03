@@ -84,6 +84,8 @@ if __name__ == '__main__':
     parser.add_argument(
         "--debug", default=False, help="debug mode", action="store_true"
     )
+    parser.add_argument("--host", default=os.getenv("HOST", "0.0.0.0"))
+    parser.add_argument("--port", default=int(os.getenv("PORT", 8080)))
     args = parser.parse_args()
     if args.version:
         print(get_ragflow_version())
@@ -103,8 +105,8 @@ if __name__ == '__main__':
     try:
         logging.info("RAGFlow HTTP server start...")
         run_simple(
-            hostname=settings.HOST_IP,
-            port=settings.HOST_PORT,
+            hostname=args.host,
+            port=args.port,
             application=app,
             threaded=True,
             use_reloader=RuntimeConfig.DEBUG,

@@ -1,0 +1,56 @@
+services:
+  - type: web
+    name: ragflow-web
+    plan: free
+    runtime: docker
+    dockerContext: .
+    dockerfilePath: Dockerfile
+    envVars:
+      - key: RENDER
+        value: "true"
+      - key: PORT
+        value: 10000
+      - key: DOC_ENGINE
+        value: "elasticsearch" 
+      - key: AWS_ACCESS_KEY_ID
+        sync: false
+      - key: AWS_SECRET_ACCESS_KEY 
+        sync: false
+      - key: ELASTICSEARCH_URL
+        value: ${ELASTICSEARCH_INSTANCE_URL}
+    
+  - type: worker
+    name: task-executor
+    plan: free 
+    runtime: docker
+    dockerContext: .
+    dockerfilePath: Dockerfile
+    command: python rag/svr/task_executor.py
+    envVars:
+      - key: RENDER
+        value: "true"
+      - key: REDIS_HOST
+        fromService:
+          name: ragflow-redis
+          type: redis
+          property: host
+      - key: REDIS_PORT
+        fromService: 
+          name: ragflow-redis
+          type: redis
+          property: port
+      - key: REDIS_PASSWORD
+        fromService:
+          name: ragflow-redis
+          type: redis  
+          property: password
+
+databases:
+  - name: ragflow-db
+    plan: free
+    databaseName: ragflow_prod
+    user: ragflow_admin
+
+redis:
+  - name: ragflow-redis
+    plan: free

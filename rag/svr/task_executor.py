@@ -61,7 +61,18 @@ from rag.nlp import search, rag_tokenizer
 from rag.raptor import RecursiveAbstractiveProcessing4TreeOrganizedRetrieval as Raptor
 from rag.settings import DOC_MAXIMUM_SIZE, SVR_QUEUE_NAME, print_rag_settings, TAG_FLD, PAGERANK_FLD
 from rag.utils import num_tokens_from_string
-from rag.utils.redis_conn import REDIS_CONN, Payload
+from rag.utils.redis_conn import RedisDB, Payload
+
+# Production Redis config for Render
+if os.getenv('RENDER'):
+    REDIS_CONN = RedisDB(
+        host=os.getenv('REDIS_HOST'),
+        port=int(os.getenv('REDIS_PORT', 6379)),
+        password=os.getenv('REDIS_PASSWORD'),
+        db=0
+    )
+else:
+    REDIS_CONN = RedisDB()
 from rag.utils.storage_factory import STORAGE_IMPL
 
 BATCH_SIZE = 64
