@@ -48,7 +48,7 @@ services:
 
   - type: redis
     name: ragflow-redis
-    plan: premium
+    plan: standard
     region: oregon
     ipAllowList:
       - source: 0.0.0.0/0
