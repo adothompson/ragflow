@@ -9,7 +9,7 @@ done < /ragflow/conf/service_conf.yaml.template
 
 /usr/sbin/nginx
 
-export LD_LIBRARY_PATH=/usr/lib/x86_64-linux-gnu/
+# Storage handled via mounted disk
 
 PY=python3
 if [[ -z "$WS" || $WS -lt 1 ]]; then

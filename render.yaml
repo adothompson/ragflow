@@ -1,17 +1,24 @@
 services:
   - type: web
     name: ragflow-web
-    plan: free
+    plan: pro-2
     runtime: docker
     dockerContext: .
     dockerfilePath: Dockerfile
+    instanceCount: 1
+    disk:
+      name: docstore
+      mountPath: /ragflow/storage
+      sizeGB: 20
     envVars:
       - key: RENDER
         value: "true"
       - key: PORT
         value: 10000
       - key: DOC_ENGINE
-        value: "elasticsearch" 
+        value: "elasticsearch"
+      - key: DOC_STORE_ROOT
+        value: /ragflow/storage
       - key: AWS_ACCESS_KEY_ID
         sync: false
       - key: AWS_SECRET_ACCESS_KEY 
@@ -21,14 +28,20 @@ services:
     
   - type: worker
     name: task-executor
-    plan: free 
+    plan: pro-2
     runtime: docker
     dockerContext: .
     dockerfilePath: Dockerfile
     command: python rag/svr/task_executor.py
+    disk:
+      name: docstore-worker
+      mountPath: /ragflow/storage
+      sizeGB: 20
     envVars:
       - key: RENDER
         value: "true"
+      - key: DOC_STORE_ROOT
+        value: /ragflow/storage
       - key: REDIS_HOST
         fromService:
           name: ragflow-redis
@@ -47,10 +60,10 @@ services:
 
 databases:
   - name: ragflow-db
-    plan: free
+    plan: standard-0
     databaseName: ragflow_prod
     user: ragflow_admin
 
 redis:
   - name: ragflow-redis
-    plan: free
+    plan: premium-0

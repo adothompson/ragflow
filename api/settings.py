@@ -16,6 +16,7 @@
 import os
 from datetime import date
 from enum import IntEnum, Enum
+from pathlib import Path
 import rag.utils.es_conn
 import rag.utils.infinity_conn
 
@@ -61,7 +62,8 @@ kg_retrievaler = None
 
 
 def init_settings():
-    global LLM, LLM_FACTORY, LLM_BASE_URL, LIGHTEN, DATABASE_TYPE, DATABASE
+    global LLM, LLM_FACTORY, LLM_BASE_URL, LIGHTEN, DATABASE_TYPE, DATABASE, STORAGE_ROOT
+    STORAGE_ROOT = Path(os.getenv("DOC_STORE_ROOT", "/ragflow/storage"))
     LIGHTEN = int(os.environ.get('LIGHTEN', "0"))
     DATABASE_TYPE = os.getenv("DB_TYPE", 'mysql')
     DATABASE = decrypt_database_config(name=DATABASE_TYPE)
