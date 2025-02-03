@@ -58,10 +58,11 @@ services:
 
 databases:
   - name: ragflow-db
-    plan: standard-0
+    plan: pro-0
+    postgresMajorVersion: "16"
     databaseName: ragflow_prod
     user: ragflow_admin
-    version: "14"
     region: oregon
+    diskSizeGB: 20
 
 # Note: Create Redis service separately in Render dashboard
