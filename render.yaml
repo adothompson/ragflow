@@ -3,9 +3,8 @@ services:
     name: ragflow-web
     plan: pro-2
     runtime: docker
-    dockerContext: .
     dockerfilePath: Dockerfile
-    instanceCount: 1
+    numInstances: 1
     disk:
       name: docstore
       mountPath: /ragflow/storage
@@ -25,14 +24,13 @@ services:
         sync: false
       - key: ELASTICSEARCH_URL
         value: ${ELASTICSEARCH_INSTANCE_URL}
-    
+
   - type: worker
-    name: task-executor
+    name: task-executor 
     plan: pro-2
     runtime: docker
-    dockerContext: .
-    dockerfilePath: Dockerfile
-    command: python rag/svr/task_executor.py
+    numInstances: 1
+    startCommand: "python rag/svr/task_executor.py"
     disk:
       name: docstore-worker
       mountPath: /ragflow/storage
@@ -44,18 +42,18 @@ services:
         value: /ragflow/storage
       - key: REDIS_HOST
         fromService:
-          name: ragflow-redis
           type: redis
+          name: ragflow-redis
           property: host
       - key: REDIS_PORT
-        fromService: 
-          name: ragflow-redis
+        fromService:
           type: redis
+          name: ragflow-redis
           property: port
       - key: REDIS_PASSWORD
         fromService:
+          type: redis
           name: ragflow-redis
-          type: redis  
           property: password
 
 databases:
@@ -63,7 +61,7 @@ databases:
     plan: standard-0
     databaseName: ragflow_prod
     user: ragflow_admin
+    version: "14"
+    region: us-east
 
-redis:
-  - name: ragflow-redis
-    plan: premium-0
+# Note: Create Redis service separately in Render dashboard
