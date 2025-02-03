@@ -1,7 +1,7 @@
 services:
   - type: web
     name: ragflow-web
-    plan: pro-2
+    plan: pro
     runtime: docker
     dockerfilePath: Dockerfile
     numInstances: 1
@@ -26,11 +26,10 @@ services:
         value: ${ELASTICSEARCH_INSTANCE_URL}
 
   - type: worker
-    name: task-executor 
-    plan: pro-2
+    name: task-executor
+    plan: pro
     runtime: docker
     numInstances: 1
-    startCommand: "python rag/svr/task_executor.py"
     disk:
       name: docstore
       mountPath: /ragflow/storage
@@ -49,7 +48,7 @@ services:
 
   - type: redis
     name: ragflow-redis
-    plan: premium-0
+    plan: premium
     region: oregon
     ipAllowList:
       - source: 0.0.0.0/0
@@ -58,7 +57,7 @@ services:
 
 databases:
   - name: ragflow-db
-    plan: pro-0
+    plan: standard
     postgresMajorVersion: "16"
     databaseName: ragflow_prod
     user: ragflow_admin

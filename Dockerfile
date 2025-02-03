@@ -207,3 +207,4 @@ COPY --from=builder /ragflow/web/dist /ragflow/web/dist
 
 COPY --from=builder /ragflow/VERSION /ragflow/VERSION
 ENTRYPOINT ["./entrypoint.sh"]
+CMD ["api/ragflow_server.py", "--host", "0.0.0.0", "--port", "10000"]
