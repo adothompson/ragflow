@@ -5,20 +5,20 @@ postgres:
   name: ${POSTGRES_DATABASE:-ragflow_prod}
   user: ${POSTGRES_USER:-ragflow_admin}
   password: ${POSTGRES_PASSWORD}
-  host: ${POSTGRES_HOST}
-  port: ${POSTGRES_PORT:-5432}
+  host: ${RENDER_POSTGRES_HOST}
+  port: ${RENDER_POSTGRES_PORT:-5432}
   max_connections: 100
   stale_timeout: 30
 s3:
-  access_key: ${AWS_ACCESS_KEY_ID}
-  secret_key: ${AWS_SECRET_ACCESS_KEY}
-  region: ${AWS_REGION:-us-west-2}
+  access_key: ${RENDER_S3_ACCESS_KEY}
+  secret_key: ${RENDER_S3_SECRET_KEY}
+  region: ${RENDER_S3_REGION:-us-west-2}
 es:
-  hosts: ${ELASTICSEARCH_URL}
-  username: ${ELASTICSEARCH_USERNAME:-elastic}
-  password: ${ELASTICSEARCH_PASSWORD}
+  hosts: ${RENDER_ELASTICSEARCH_URL}
+  username: ${RENDER_ELASTICSEARCH_USER:-elastic}
+  password: ${RENDER_ELASTICSEARCH_PASSWORD}
 redis:
   db: 1
-  password: ${REDIS_PASSWORD}
-  host: ${REDIS_HOST}
-  port: ${REDIS_PORT:-6379}
+  password: ${RENDER_REDIS_PASSWORD}
+  host: ${RENDER_REDIS_HOST}
+  port: ${RENDER_REDIS_PORT:-6379}
