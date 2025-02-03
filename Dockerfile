@@ -165,9 +165,7 @@ COPY docs docs
 RUN --mount=type=cache,id=ragflow_npm,target=/root/.npm,sharing=locked \
     cd web && npm install && npm run build
 
-COPY .git /ragflow/.git
-
-RUN version_info=$(git describe --tags --match=v* --first-parent --always); \
+RUN version_info=$(git describe --tags --match=v* --first-parent --always 2>/dev/null || echo "unknown-$(date +%Y%m%d)"); \
     if [ "$LIGHTEN" == "1" ]; then \
         version_info="$version_info slim"; \
     else \
