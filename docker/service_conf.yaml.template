@@ -17,6 +17,11 @@ es:
   hosts: 'http://${ES_HOST:-es01}:9200'
   username: '${ES_USER:-elastic}'
   password: '${ELASTIC_PASSWORD:-infini_rag_flow}'
+  options:
+    compatibility_mode: "8.x"
+    retry_on_timeout: true
+    max_retries: 3
+    timeout: 30
 infinity:
   uri: '${INFINITY_HOST:-infinity}:23817'
   db_name: 'default_db'

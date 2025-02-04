@@ -1,8 +1,16 @@
-FROM docker.elastic.co/elasticsearch/elasticsearch:7.16.1
+FROM docker.elastic.co/elasticsearch/elasticsearch:8.11.3
 
-# Copy custom config
+# Required for Render deployment
+ENV ES_JAVA_OPTS="-Xms1g -Xmx1g"
+ENV discovery.type=single-node
+ENV xpack.security.enabled=false
+
+# Copy config
 COPY config/elasticsearch.yml /usr/share/elasticsearch/config/
-COPY config/log4j2.properties /usr/share/elasticsearch/config/
 
-# Fix permissions for keystore creation
-RUN chmod g+ws /usr/share/elasticsearch/config
+# Fix permissions for Render's environment
+RUN mkdir -p /usr/share/elasticsearch/data && \
+    chown -R elasticsearch:elasticsearch /usr/share/elasticsearch && \
+    chmod 0775 /usr/share/elasticsearch && \
+    chmod -R 0770 /usr/share/elasticsearch/data && \
+    chmod g+ws /usr/share/elasticsearch/config

@@ -24,6 +24,11 @@ es:
     index.mapping.total_fields.limit: 2000
     index.max_result_window: 10000
     index.refresh_interval: "30s"
+  options:
+    compatibility_mode: "8.x"
+    retry_on_timeout: true
+    max_retries: 3
+    timeout: 30
 redis:
   db: 1
   password: ${REDIS_PASSWORD}

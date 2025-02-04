@@ -1,7 +1,12 @@
-cluster.name: "elastic"
+cluster.name: "ragflow-cluster"
 network.host: 0.0.0.0
 discovery.type: single-node
-xpack.security.enabled: false
 
-# Increase this if you need more than 1000 pending tasks
-thread_pool.write.queue_size: 1000
+# Security configuration for 8.x
+xpack.security.enabled: false
+xpack.security.authc.anonymous.roles: superuser
+xpack.security.authc.api_key.enabled: true
+
+# Performance tuning
+thread_pool.write.queue_size: 2000
+bootstrap.memory_lock: true
