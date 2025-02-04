@@ -1,16 +1,23 @@
 FROM docker.elastic.co/elasticsearch/elasticsearch:8.11.3
 
-# Required for Render deployment
+# Set environment variables first
 ENV ES_JAVA_OPTS="-Xms1g -Xmx1g"
 ENV discovery.type=single-node
 ENV xpack.security.enabled=false
 
-# Copy config
+# Create directories as root first
+USER root
+RUN mkdir -p /usr/share/elasticsearch/data && \
+    mkdir -p /usr/share/elasticsearch/config
+
+# Copy config files before changing permissions
 COPY config/elasticsearch.yml /usr/share/elasticsearch/config/
 
-# Fix permissions for Render's environment
-RUN mkdir -p /usr/share/elasticsearch/data && \
-    chown -R elasticsearch:elasticsearch /usr/share/elasticsearch && \
-    chmod 0775 /usr/share/elasticsearch && \
+# Set permissions in one layer
+RUN chown -R elasticsearch:elasticsearch /usr/share/elasticsearch && \
     chmod -R 0770 /usr/share/elasticsearch/data && \
-    chmod g+ws /usr/share/elasticsearch/config
+    chmod 0755 /usr/share/elasticsearch && \
+    chmod 0750 /usr/share/elasticsearch/config
+
+# Switch back to elasticsearch user
+USER elasticsearch
