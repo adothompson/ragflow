@@ -23,7 +23,11 @@ services:
       - key: AWS_SECRET_ACCESS_KEY 
         sync: false
       - key: ELASTICSEARCH_URL
-        value: ${ELASTICSEARCH_INSTANCE_URL}
+        sync: false
+      - key: ELASTICSEARCH_USERNAME  
+        sync: false
+      - key: ELASTICSEARCH_PASSWORD
+        sync: false
 
   - type: worker
     name: task-executor

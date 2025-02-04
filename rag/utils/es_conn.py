@@ -41,24 +41,32 @@ logger = logging.getLogger('ragflow.es_conn')
 class ESConnection(DocStoreConnection):
     def __init__(self):
         self.info = {}
-        logger.info(f"Use Elasticsearch {settings.ES['hosts']} as the doc engine.")
+        
+        # Get config from environment variables for Render
+        es_url = os.getenv('ELASTICSEARCH_URL', 'http://elasticsearch:9200')
+        es_user = os.getenv('ELASTICSEARCH_USERNAME', 'elastic') 
+        es_pass = os.getenv('ELASTICSEARCH_PASSWORD', '')
+
+        logger.info(f"Connecting to Elasticsearch at {es_url}")
+        
         for _ in range(ATTEMPT_TIME):
             try:
                 self.es = Elasticsearch(
-                    settings.ES["hosts"].split(","),
-                    basic_auth=(settings.ES["username"], settings.ES[
-                        "password"]) if "username" in settings.ES and "password" in settings.ES else None,
+                    [es_url],
+                    basic_auth=(es_user, es_pass),
                     verify_certs=False,
                     timeout=600
                 )
-                if self.es:
+                if self.es.ping():
                     self.info = self.es.info()
+                    logger.info("Successfully connected to Elasticsearch")
                     break
             except Exception as e:
-                logger.warning(f"{str(e)}. Waiting Elasticsearch {settings.ES['hosts']} to be healthy.")
+                logger.warning(f"{str(e)}. Waiting for Elasticsearch to be healthy...")
                 time.sleep(5)
-        if not self.es.ping():
-            msg = f"Elasticsearch {settings.ES['hosts']} is unhealthy in 120s."
+                
+        if not self.es or not self.es.ping():
+            msg = f"Failed to connect to Elasticsearch at {es_url} after {ATTEMPT_TIME} attempts"
             logger.error(msg)
             raise Exception(msg)
         v = self.info.get("version", {"number": "8.11.3"})
