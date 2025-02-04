@@ -23,11 +23,17 @@ services:
       - key: AWS_SECRET_ACCESS_KEY 
         sync: false
       - key: ELASTICSEARCH_URL
-        sync: false
-      - key: ELASTICSEARCH_USERNAME  
-        sync: false
+        fromService:
+          name: ragflow-elasticsearch
+          type: elasticsearch
+          property: connectionString
+      - key: ELASTICSEARCH_USERNAME
+        value: elastic
       - key: ELASTICSEARCH_PASSWORD
-        sync: false
+        fromService:
+          name: ragflow-elasticsearch
+          type: elasticsearch
+          property: password
 
   - type: worker
     name: task-executor
@@ -49,6 +55,18 @@ services:
         value: 6379
       - key: REDIS_PASSWORD
         value: ""
+      - key: ELASTICSEARCH_URL
+        fromService:
+          name: ragflow-elasticsearch
+          type: elasticsearch
+          property: connectionString
+      - key: ELASTICSEARCH_USERNAME
+        value: elastic
+      - key: ELASTICSEARCH_PASSWORD
+        fromService:
+          name: ragflow-elasticsearch
+          type: elasticsearch
+          property: password
 
   - type: redis
     name: ragflow-redis
@@ -58,6 +76,23 @@ services:
       - source: 0.0.0.0/0
         description: "Render services"
     maxmemoryPolicy: allkeys-lru
+
+  - type: elasticsearch
+    name: ragflow-elasticsearch
+    plan: standard
+    region: oregon
+    ipAllowList:
+      - source: 0.0.0.0/0
+        description: "Render services"
+    disk:
+      name: esdata
+      mountPath: /usr/share/elasticsearch/data
+      sizeGB: 10
+    envVars:
+      - key: discovery.type
+        value: single-node
+      - key: ES_JAVA_OPTS
+        value: -Xms256m -Xmx256m
 
 databases:
   - name: ragflow-db
