@@ -17,6 +17,10 @@ es:
   hosts: ${RENDER_ELASTICSEARCH_URL}
   username: ${RENDER_ELASTICSEARCH_USER:-elastic}
   password: ${RENDER_ELASTICSEARCH_PASSWORD}
+  index_name: ${ELASTICSEARCH_INDEX_NAME:-ragflow_docs}
+  settings:
+    number_of_shards: 1
+    number_of_replicas: 0
 redis:
   db: 1
   password: ${RENDER_REDIS_PASSWORD}
