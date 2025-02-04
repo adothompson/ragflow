@@ -68,7 +68,8 @@ services:
   - type: pserv
     name: elasticsearch
     runtime: docker
-    dockerfilePath: Dockerfile.elasticsearch
+    dockerContext: docker/
+    dockerfilePath: docker/Dockerfile.elasticsearch
     plan: standard
     region: oregon
     disk:
