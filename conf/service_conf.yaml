@@ -5,24 +5,30 @@ postgres:
   name: ${POSTGRES_DATABASE:-ragflow_prod}
   user: ${POSTGRES_USER:-ragflow_admin}
   password: ${POSTGRES_PASSWORD}
-  host: ${RENDER_POSTGRES_HOST}
+  host: ${RENDER_POSTGRES_HOST:-ragflow-db}
   port: ${RENDER_POSTGRES_PORT:-5432}
   max_connections: 100
   stale_timeout: 30
+  retry_attempts: 5
+  retry_delay: 5
 s3:
   access_key: ${RENDER_S3_ACCESS_KEY}
   secret_key: ${RENDER_S3_SECRET_KEY}
   region: ${RENDER_S3_REGION:-us-west-2}
 es:
-  hosts: ${RENDER_ELASTICSEARCH_URL}
+  hosts: ${RENDER_ELASTICSEARCH_URL:-http://elasticsearch:9200}
   username: ${RENDER_ELASTICSEARCH_USER:-elastic}
   password: ${RENDER_ELASTICSEARCH_PASSWORD}
   index_name: ${ELASTICSEARCH_INDEX_NAME:-ragflow_docs}
   settings:
     number_of_shards: 1
     number_of_replicas: 0
+    index.mapping.total_fields.limit: 2000
+    index.max_result_window: 10000
 redis:
   db: 1
   password: ${RENDER_REDIS_PASSWORD}
-  host: ${RENDER_REDIS_HOST}
+  host: ${RENDER_REDIS_HOST:-ragflow-redis}
   port: ${RENDER_REDIS_PORT:-6379}
+  retry_attempts: 5
+  retry_delay: 5
