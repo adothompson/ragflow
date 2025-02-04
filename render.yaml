@@ -83,9 +83,6 @@ services:
     plan: standard
     region: oregon
     autoDeploy: false
-    ipAllowList:
-      - source: 0.0.0.0/0
-        description: "Render services"
     disk:
       name: esdata
       mountPath: /usr/share/elasticsearch/data
