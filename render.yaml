@@ -23,17 +23,11 @@ services:
       - key: AWS_SECRET_ACCESS_KEY 
         sync: false
       - key: ELASTICSEARCH_URL
-        fromService:
-          name: elasticsearch
-          type: elasticsearch
-          property: connectionString
+        value: http://elasticsearch:9200
       - key: ELASTICSEARCH_USERNAME
         value: elastic
       - key: ELASTICSEARCH_PASSWORD
-        fromService:
-          name: elasticsearch
-          type: elasticsearch
-          property: password
+        value: ""
 
   - type: worker
     name: task-executor
@@ -56,17 +50,11 @@ services:
       - key: REDIS_PASSWORD
         value: ""
       - key: ELASTICSEARCH_URL
-        fromService:
-          name: ragflow-elasticsearch
-          type: elasticsearch
-          property: connectionString
+        value: http://elasticsearch:9200
       - key: ELASTICSEARCH_USERNAME
         value: elastic
       - key: ELASTICSEARCH_PASSWORD
-        fromService:
-          name: ragflow-elasticsearch
-          type: elasticsearch
-          property: password
+        value: ""
 
   - type: redis
     name: ragflow-redis
@@ -94,6 +82,8 @@ services:
         value: "-Xms512m -Xmx512m"
       - key: cluster.name
         value: elastic
+      - key: xpack.security.enabled
+        value: "false"
 
 databases:
   - name: ragflow-db
