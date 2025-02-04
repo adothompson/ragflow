@@ -14,7 +14,8 @@ RUN mkdir -p /usr/share/elasticsearch/data && \
 COPY config/elasticsearch.yml /usr/share/elasticsearch/config/
 
 # Set permissions in one layer
-RUN chown -R elasticsearch:elasticsearch /usr/share/elasticsearch && \
+RUN mkdir -p /usr/share/elasticsearch/data && \
+    chown -R 1000:0 /usr/share/elasticsearch && \
     chmod -R 0770 /usr/share/elasticsearch/data && \
     chmod 0755 /usr/share/elasticsearch && \
     chmod 0750 /usr/share/elasticsearch/config

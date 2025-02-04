@@ -14,9 +14,7 @@
 #  limitations under the License.
 #
 
-# from beartype import BeartypeConf
-# from beartype.claw import beartype_all  # <-- you didn't sign up for this
-# beartype_all(conf=BeartypeConf(violation_type=UserWarning))    # <-- emit warnings from all code
+from elasticsearch import Elasticsearch
 
 from api.utils.log_utils import initRootLogger
 initRootLogger("ragflow_server")
@@ -71,9 +69,38 @@ if __name__ == '__main__':
     settings.init_settings()
     print_rag_settings()
 
+    def init_elasticsearch_connection():
+        """Initialize and verify Elasticsearch connection"""
+        logger = logging.getLogger(__name__)
+        es_url = os.getenv("ELASTICSEARCH_URL", "http://elasticsearch:9200")
+        timeout = int(os.getenv("ELASTICSEARCH_TIMEOUT", 45))
+        max_retries = int(os.getenv("ELASTICSEARCH_MAX_RETRIES", 10))
+        
+        logger.info(f"Connecting to Elasticsearch at {es_url}")
+        
+        for attempt in range(1, max_retries + 1):
+            try:
+                es = Elasticsearch(
+                    [es_url],
+                    request_timeout=timeout,
+                    max_retries=max_retries,
+                    retry_on_timeout=True,
+                    verify_certs=False
+                )
+                if es.ping():
+                    logger.info("Successfully connected to Elasticsearch")
+                    return es
+            except Exception as e:
+                logger.warning(f"Connection attempt {attempt}/{max_retries} failed: {str(e)}")
+                time.sleep(2 ** attempt)  # Exponential backoff
+                
+        logger.error("Could not connect to Elasticsearch after all retries")
+        sys.exit(1)
+
     # init db
     init_web_db()
     init_web_data()
+    es_client = init_elasticsearch_connection()  # Verify connection before starting
     # init runtime config
     import argparse
 
