@@ -19,12 +19,15 @@ es:
   hosts: ${RENDER_ELASTICSEARCH_URL:-http://elasticsearch:9200}
   username: ${RENDER_ELASTICSEARCH_USER:-elastic}
   password: ${RENDER_ELASTICSEARCH_PASSWORD}
+  verify_certs: false
+  request_timeout: 120
   index_name: ${ELASTICSEARCH_INDEX_NAME:-ragflow_docs}
   settings:
     number_of_shards: 1
     number_of_replicas: 0
     index.mapping.total_fields.limit: 2000
     index.max_result_window: 10000
+    index.refresh_interval: "30s"
 redis:
   db: 1
   password: ${RENDER_REDIS_PASSWORD}
