@@ -67,19 +67,19 @@ services:
 
   - type: pserv
     name: elasticsearch
-    env: docker
+    runtime: docker
+    dockerfilePath: Dockerfile.elasticsearch
     plan: standard
     region: oregon
-    autoDeploy: false
     disk:
       name: esdata
       mountPath: /usr/share/elasticsearch/data
       sizeGB: 10
     envVars:
+      - key: ES_JAVA_OPTS
+        value: "-Xms1g -Xmx1g"
       - key: discovery.type
         value: single-node
-      - key: ES_JAVA_OPTS
-        value: "-Xms512m -Xmx512m"
       - key: cluster.name
         value: elastic
       - key: xpack.security.enabled

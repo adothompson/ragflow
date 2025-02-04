@@ -1,0 +1,7 @@
+cluster.name: "elastic"
+network.host: 0.0.0.0
+discovery.type: single-node
+xpack.security.enabled: false
+
+# Increase this if you need more than 1000 pending tasks
+thread_pool.write.queue_size: 1000

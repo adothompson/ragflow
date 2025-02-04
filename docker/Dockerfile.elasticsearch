@@ -1,0 +1,8 @@
+FROM docker.elastic.co/elasticsearch/elasticsearch:7.16.1
+
+# Copy custom config
+COPY config/elasticsearch.yml /usr/share/elasticsearch/config/
+COPY config/log4j2.properties /usr/share/elasticsearch/config/
+
+# Fix permissions for keystore creation
+RUN chmod g+ws /usr/share/elasticsearch/config
