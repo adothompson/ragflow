@@ -85,7 +85,12 @@ if __name__ == '__main__':
                     request_timeout=timeout,
                     max_retries=max_retries,
                     retry_on_timeout=True,
-                    verify_certs=False
+                    verify_certs=False,
+                    sniff_on_start=True,
+                    sniff_on_connection_fail=True,
+                    sniffer_timeout=60,
+                    sniff_timeout=10,
+                    http_compress=True
                 )
                 if es.ping():
                     logger.info("Successfully connected to Elasticsearch")

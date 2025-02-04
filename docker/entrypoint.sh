@@ -8,20 +8,10 @@ while IFS= read -r line || [[ -n "$line" ]]; do
 done < /ragflow/conf/service_conf.yaml.template
 
 echo "Waiting for Elasticsearch..."
-ES_READY=0
-for i in {1..15}; do
-  if curl -sSf http://elasticsearch:9200/_cluster/health | grep -q '"status":"green"'; then
-    ES_READY=1
-    break
-  fi
-  echo "Elasticsearch not ready - retrying in 15s (attempt $i/15)..."
+until curl -sSf http://elasticsearch:9200/_cluster/health | grep -q '"status":"green"'; do
+  echo "Elasticsearch not ready - retrying in 15s..."
   sleep 15
 done
-
-if [ "$ES_READY" -ne 1 ]; then
-  echo "FATAL: Elasticsearch health check failed after 15 attempts"
-  exit 1
-fi
 
 /usr/sbin/nginx
 

@@ -6,7 +6,7 @@ services:
     dockerfilePath: Dockerfile
     numInstances: 1
     dependsOn:
-      - elasticsearch
+      - elasticsearch  # Must be first
       - ragflow-db
       - ragflow-redis
     disk:
@@ -85,16 +85,22 @@ services:
     disk:
       name: esdata
       mountPath: /usr/share/elasticsearch/data
-      sizeGB: 10
+      sizeGB: 20
     envVars:
       - key: ES_JAVA_OPTS
         value: "-Xms1g -Xmx1g"
       - key: discovery.type
         value: single-node
       - key: cluster.name
-        value: elastic
+        value: "ragflow-cluster"
       - key: xpack.security.enabled
         value: "false"
+      - key: network.publish_host
+        value: "_site_"
+      - key: http.port
+        value: "9200"
+      - key: transport.port
+        value: "9300"
 
 databases:
   - name: ragflow-db

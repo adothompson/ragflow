@@ -1,7 +1,7 @@
 cluster.name: "ragflow-cluster"
 network.host: 0.0.0.0
 discovery.type: single-node
-discovery.seed_hosts: []
+discovery.seed_hosts: ["127.0.0.1", "[::1]"]
 
 xpack.security.enabled: false
 xpack.security.authc.anonymous.roles: superuser
@@ -9,6 +9,7 @@ xpack.security.authc.api_key.enabled: true
 
 transport.host: 0.0.0.0
 transport.tcp.port: 9300
+http.port: 9200
 
 # Performance tuning
 thread_pool.write.queue_size: 2000
