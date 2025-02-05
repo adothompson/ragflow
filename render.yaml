@@ -2,10 +2,10 @@ services:
   - type: web
     name: minio-server
     plan: standard
-    runtime: docker
+    runtime: image
     image: minio/minio:latest
     healthCheckPath: /minio/health/live
-    dockerCommand: minio server /data --address 0.0.0.0:9000 --console-address 0.0.0.0:9001
+    dockerCommand: minio server /data --address $HOST:$PORT --console-address $HOST:$CONSOLE_PORT
     disk:
       name: minio-data
       mountPath: /data
@@ -15,12 +15,18 @@ services:
         generateValue: true
       - key: MINIO_ROOT_PASSWORD
         generateValue: true
+      - key: HOST
+        value: "0.0.0.0"
+      - key: PORT
+        value: 9000
+      - key: CONSOLE_PORT
+        value: 9001
 
   - type: web
     name: minio-console
     plan: starter
     runtime: docker
-    dockerContext: /
+    dockerContext: ./docker
     dockerfilePath: ./docker/minio-console.Dockerfile
     envVars:
       - key: PORT
@@ -31,7 +37,10 @@ services:
           type: web
           property: host
       - key: MINIO_CONSOLE_PORT
-        value: 9001
+        fromService:
+          name: minio-server
+          type: web
+          envVarKey: CONSOLE_PORT
 
   - type: web
     name: ragflow-web
@@ -40,10 +49,11 @@ services:
     dockerfilePath: Dockerfile
     numInstances: 1
     healthCheckPath: /health
-    healthCheckTimeoutSeconds: 20
-    healthCheckIntervalSeconds: 10
-    healthCheckHealthyThreshold: 3
-    healthCheckUnhealthyThreshold: 3
+    healthCheckPolicy:
+      timeoutSeconds: 20
+      intervalSeconds: 10
+      healthyThreshold: 3
+      unhealthyThreshold: 3
     disk:
       name: docstore
       mountPath: /ragflow/storage
