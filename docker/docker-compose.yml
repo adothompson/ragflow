@@ -2,33 +2,6 @@ include:
   - ./docker-compose-base.yml
 
 services:
-  elasticsearch:
-    image: docker.elastic.co/elasticsearch/elasticsearch:8.11.3
-    container_name: elasticsearch
-    volumes:
-      - ./docker/config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml
-      - es_data:/usr/share/elasticsearch/data
-    environment:
-      - "discovery.type=single-node"
-      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
-      - "xpack.security.enabled=false"
-      - "action.destructive_requires_name=false"
-    ulimits:
-      memlock:
-        soft: -1
-        hard: -1
-    cap_add:
-      - IPC_LOCK
-    networks:
-      - ragflow
-    ports:
-      - "9200:9200"
-      - "9300:9300"
-    healthcheck:
-      test: ["CMD-SHELL", "curl -s http://localhost:9200/_cluster/health | grep -qE 'green|yellow'"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
 
   ragflow:
     depends_on:

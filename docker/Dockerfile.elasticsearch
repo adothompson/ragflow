@@ -1,24 +1,22 @@
 FROM docker.elastic.co/elasticsearch/elasticsearch:8.11.3
 
-# Set environment variables first
-ENV ES_JAVA_OPTS="-Xms1g -Xmx1g"
+# Set environment variables
+ENV ES_JAVA_OPTS="-Xms512m -Xmx512m"
 ENV discovery.type=single-node
 ENV xpack.security.enabled=false
 
-# Create directories as root first
+# Create directories and set permissions in one layer
 USER root
-RUN mkdir -p /usr/share/elasticsearch/data && \
-    mkdir -p /usr/share/elasticsearch/config
-
-# Copy config files before changing permissions
-COPY config/elasticsearch.yml /usr/share/elasticsearch/config/
-
-# Set permissions in one layer
-RUN mkdir -p /usr/share/elasticsearch/data && \
+RUN mkdir -p /usr/share/elasticsearch/data /usr/share/elasticsearch/config && \
     chown -R 1000:0 /usr/share/elasticsearch && \
     chmod -R 0770 /usr/share/elasticsearch/data && \
     chmod 0755 /usr/share/elasticsearch && \
     chmod 0750 /usr/share/elasticsearch/config
 
-# Switch back to elasticsearch user
+# Copy config files 
+COPY config/elasticsearch.yml /usr/share/elasticsearch/config/
+
 USER elasticsearch
+
+HEALTHCHECK --interval=10s --timeout=5s --retries=5 \
+  CMD curl -s http://localhost:9200/_cluster/health | grep -qE 'green|yellow'

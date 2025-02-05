@@ -42,12 +42,14 @@ class ESConnection(DocStoreConnection):
     def __init__(self):
         self.info = {}
         
-        # Get config from environment variables for Render
+        # Get config from environment variables for Render deployment
         es_url = os.getenv('ELASTICSEARCH_URL', 'http://elasticsearch:9200')
         es_user = os.getenv('ELASTICSEARCH_USERNAME', 'elastic') 
         es_pass = os.getenv('ELASTICSEARCH_PASSWORD', '')
+        max_retries = int(os.getenv('ES_MAX_RETRIES', '5'))
+        retry_interval = int(os.getenv('ES_RETRY_INTERVAL', '10'))
 
-        logger.info(f"Connecting to Elasticsearch at {es_url}")
+        logger.info(f"Connecting to Elasticsearch at {es_url} (max retries: {max_retries})")
         
         for _ in range(ATTEMPT_TIME):
             try:
