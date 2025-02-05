@@ -1,1 +1,3 @@
 requests
+elasticsearch>=8.11.3  # Add explicit ES 8.x client
+elasticsearch-dsl>=8.0.0  # Required companion library

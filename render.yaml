@@ -18,22 +18,17 @@ services:
         value: "elasticsearch"
       - key: DOC_STORE_ROOT
         value: /ragflow/storage
-      - key: AWS_ACCESS_KEY_ID
-        sync: false
-      - key: AWS_SECRET_ACCESS_KEY 
-        sync: false
       - key: ELASTICSEARCH_URL
         value: "http://elasticsearch:9200"
-      - key: ELASTICSEARCH_TIMEOUT
-        value: "60"
-      - key: ELASTICSEARCH_MAX_RETRIES
-        value: "15"
-      - key: ELASTICSEARCH_VERIFY_CERTS
-        value: "false"
       - key: ELASTICSEARCH_USERNAME
         value: elastic
       - key: ELASTICSEARCH_PASSWORD
-        value: ""
+        sync: false  # Set via Render dashboard
+      - fromService:
+          type: redis
+          name: ragflow-redis
+          property: connectionString
+          key: REDIS_URL
 
   - type: worker
     name: task-executor
@@ -47,20 +42,16 @@ services:
     envVars:
       - key: RENDER
         value: "true"
-      - key: DOC_STORE_ROOT
-        value: /ragflow/storage
-      - key: REDIS_HOST
-        value: ragflow-redis
-      - key: REDIS_PORT
-        value: 6379
-      - key: REDIS_PASSWORD
-        value: ""
-      - key: ELASTICSEARCH_URL
-        value: http://elasticsearch:9200
-      - key: ELASTICSEARCH_USERNAME
-        value: elastic
-      - key: ELASTICSEARCH_PASSWORD
-        value: ""
+      - fromService:
+          type: redis
+          name: ragflow-redis
+          property: connectionString
+          key: REDIS_URL
+      - fromService:
+          type: postgres
+          name: ragflow-db
+          property: connectionString
+          key: DATABASE_URL
 
   - type: redis
     name: ragflow-redis
@@ -68,35 +59,8 @@ services:
     region: oregon
     ipAllowList:
       - source: 0.0.0.0/0
-        description: "Render services"
+        description: "Allow all Render services"
     maxmemoryPolicy: allkeys-lru
-
-  - type: pserv
-    name: elasticsearch
-    runtime: docker
-    dockerContext: docker/
-    dockerfilePath: docker/Dockerfile.elasticsearch
-    plan: pro
-    region: oregon
-    disk:
-      name: esdata
-      mountPath: /usr/share/elasticsearch/data
-      sizeGB: 20
-    envVars:
-      - key: ES_JAVA_OPTS
-        value: "-Xms1g -Xmx1g"
-      - key: discovery.type
-        value: single-node
-      - key: cluster.name
-        value: "ragflow-cluster"
-      - key: xpack.security.enabled
-        value: "false"
-      - key: network.publish_host
-        value: "_site_"
-      - key: http.port
-        value: "9200"
-      - key: transport.port
-        value: "9300"
 
 databases:
   - name: ragflow-db
@@ -109,5 +73,3 @@ databases:
     ipAllowList:
       - source: 0.0.0.0/0
         description: everywhere
-
-# Note: Create Redis service separately in Render dashboard
