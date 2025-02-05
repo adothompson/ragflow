@@ -56,7 +56,7 @@ class ESConnection(DocStoreConnection):
                     basic_auth=(es_user, es_pass),
                     verify_certs=False,
                     timeout=600,
-                    transport_opts={'transport.port': 9300}  # Use correct transport port setting for ES 8.x
+                    transport_opts={'port': 9300}  # ES 8.x transport configuration
                 )
                 if self.es.ping():
                     self.info = self.es.info()
