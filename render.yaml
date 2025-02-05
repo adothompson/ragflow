@@ -1,4 +1,20 @@
 services:
+  - type: pserv
+    name: ragflow-minio
+    plan: standard
+    runtime: docker
+    image: minio/minio:latest
+    disk:
+      name: minio-data
+      mountPath: /data
+      sizeGB: 20
+    envVars:
+      - key: MINIO_ROOT_USER
+        generateValue: true
+      - key: MINIO_ROOT_PASSWORD
+        generateValue: true
+    command: server /data --console-address ":9001"
+
   - type: web
     name: ragflow-web
     plan: pro
@@ -26,6 +42,21 @@ services:
         value: elastic
       - key: ELASTICSEARCH_PASSWORD
         sync: false  # Set via Render dashboard
+      - key: S3_ENDPOINT
+        fromService:
+          type: pserv
+          name: ragflow-minio
+          property: hostPort
+      - key: AWS_ACCESS_KEY_ID
+        fromService:
+          type: pserv
+          name: ragflow-minio
+          envVarKey: MINIO_ROOT_USER
+      - key: AWS_SECRET_ACCESS_KEY
+        fromService:
+          type: pserv
+          name: ragflow-minio
+          envVarKey: MINIO_ROOT_PASSWORD
       - fromService:
           type: redis
           name: ragflow-redis
@@ -44,6 +75,21 @@ services:
     envVars:
       - key: RENDER
         value: "true"
+      - key: S3_ENDPOINT
+        fromService:
+          type: pserv
+          name: ragflow-minio
+          property: hostPort
+      - key: AWS_ACCESS_KEY_ID
+        fromService:
+          type: pserv
+          name: ragflow-minio
+          envVarKey: MINIO_ROOT_USER
+      - key: AWS_SECRET_ACCESS_KEY
+        fromService:
+          type: pserv
+          name: ragflow-minio
+          envVarKey: MINIO_ROOT_PASSWORD
       - fromService:
           type: redis
           name: ragflow-redis
