@@ -13,16 +13,20 @@ services:
         generateValue: true
       - key: MINIO_ROOT_PASSWORD
         generateValue: true
-    command: server /data --console-address ":9001"
+    dockerCommand: server /data --console-address ":9001"
 
   - type: web
     name: ragflow-web
     plan: pro
-    healthCheckPath: /health
-    healthCheckTimeout: 20
     runtime: docker
     dockerfilePath: Dockerfile
     numInstances: 1
+    healthCheckPolicy:
+      path: /health
+      timeoutSeconds: 20
+      intervalSeconds: 10
+      healthyThreshold: 3
+      unhealthyThreshold: 3
     disk:
       name: docstore
       mountPath: /ragflow/storage
