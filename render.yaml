@@ -1,9 +1,11 @@
 services:
-  - type: pserv
-    name: ragflow-minio
+  - type: web
+    name: minio-server
     plan: standard
     runtime: docker
     image: minio/minio:latest
+    healthCheckPath: /minio/health/live
+    dockerCommand: minio server /data --address 0.0.0.0:9000 --console-address 0.0.0.0:9001
     disk:
       name: minio-data
       mountPath: /data
@@ -13,7 +15,23 @@ services:
         generateValue: true
       - key: MINIO_ROOT_PASSWORD
         generateValue: true
-    dockerCommand: "server /data --console-address ':9001'"
+
+  - type: web
+    name: minio-console
+    plan: starter
+    runtime: docker
+    dockerContext: /
+    dockerfilePath: ./docker/minio-console.Dockerfile
+    envVars:
+      - key: PORT
+        value: 10000
+      - key: MINIO_HOST
+        fromService:
+          name: minio-server
+          type: web
+          property: host
+      - key: MINIO_CONSOLE_PORT
+        value: 9001
 
   - type: web
     name: ragflow-web
@@ -46,10 +64,9 @@ services:
       - key: ELASTICSEARCH_PASSWORD
         sync: false  # Set via Render dashboard
       - key: S3_ENDPOINT
-        fromService:
-          type: pserv
-          name: ragflow-minio
-          property: hostPort
+        value: http://minio-server:9000
+      - key: S3_CONSOLE_ENDPOINT
+        value: https://${RENDER_SERVICE_NAME}-minio-console.onrender.com
       - key: AWS_ACCESS_KEY_ID
         fromService:
           type: pserv
