@@ -21,12 +21,11 @@ services:
     runtime: docker
     dockerfilePath: Dockerfile
     numInstances: 1
-    healthCheckPolicy:
-      path: /health
-      timeoutSeconds: 20
-      intervalSeconds: 10
-      healthyThreshold: 3
-      unhealthyThreshold: 3
+    healthCheckPath: /health
+    healthCheckTimeoutSeconds: 20
+    healthCheckIntervalSeconds: 10
+    healthCheckHealthyThreshold: 3
+    healthCheckUnhealthyThreshold: 3
     disk:
       name: docstore
       mountPath: /ragflow/storage
