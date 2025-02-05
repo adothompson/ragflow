@@ -48,6 +48,9 @@ class ESConnection(DocStoreConnection):
         es_pass = os.getenv('ELASTICSEARCH_PASSWORD', '')
         max_retries = int(os.getenv('ES_MAX_RETRIES', '5'))
         retry_interval = int(os.getenv('ES_RETRY_INTERVAL', '10'))
+        
+        if not es_pass:
+            logger.warning("ELASTICSEARCH_PASSWORD not set - this may cause connection issues")
 
         logger.info(f"Connecting to Elasticsearch at {es_url} (max retries: {max_retries})")
         

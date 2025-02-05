@@ -2,12 +2,16 @@ cluster.name: "ragflow-cluster"
 network.host: 0.0.0.0
 discovery.type: single-node
 
-xpack.security.enabled: false
+xpack.security.enabled: true
 xpack.security.authc.anonymous.roles: superuser
 xpack.security.authc.api_key.enabled: true
 
 transport.port: 9300
 http.port: 9200
+
+# Health check settings
+http.cors.enabled: true
+http.cors.allow-origin: "*"
 
 cluster.routing.allocation.disk.threshold_enabled: false
 

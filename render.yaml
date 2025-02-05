@@ -2,6 +2,8 @@ services:
   - type: web
     name: ragflow-web
     plan: pro
+    healthCheckPath: /health
+    healthCheckTimeout: 20
     runtime: docker
     dockerfilePath: Dockerfile
     numInstances: 1
