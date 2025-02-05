@@ -13,7 +13,7 @@ services:
         generateValue: true
       - key: MINIO_ROOT_PASSWORD
         generateValue: true
-    dockerCommand: server /data --console-address ":9001"
+    dockerCommand: "server /data --console-address ':9001'"
 
   - type: web
     name: ragflow-web
