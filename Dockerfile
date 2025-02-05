@@ -206,3 +206,6 @@ COPY --from=builder /ragflow/web/dist /ragflow/web/dist
 COPY --from=builder /ragflow/VERSION /ragflow/VERSION
 ENTRYPOINT ["./entrypoint.sh"]
 CMD ["api/ragflow_server.py", "--host", "0.0.0.0", "--port", "10000"]
+FROM nginx:stable-alpine-slim
+COPY docker/minio-console.conf.template /etc/nginx/templates/
+RUN rm /etc/nginx/conf.d/default.conf /docker-entrypoint.d/10-listen-on-ipv6-by-default.sh

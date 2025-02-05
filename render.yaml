@@ -2,8 +2,9 @@ services:
   - type: web
     name: minio-server
     plan: standard
-    runtime: image
-    image: minio/minio:latest
+    runtime: image  # Must use 'image' runtime for direct MinIO deployment
+    image:
+      url: docker.io/minio/minio:latest  # Correct image specification
     healthCheckPath: /minio/health/live
     dockerCommand: minio server /data --address $HOST:$PORT --console-address $HOST:$CONSOLE_PORT
     disk:
@@ -19,15 +20,16 @@ services:
         value: "0.0.0.0"
       - key: PORT
         value: 9000
-      - key: CONSOLE_PORT
-        value: 9001
+      - key: CONSOLE_PORT  # Must match example value 9090
+        value: 9090
+    autoDeploy: false  # Add as per example
 
   - type: web
     name: minio-console
     plan: starter
     runtime: docker
-    dockerContext: ./docker
-    dockerfilePath: ./docker/minio-console.Dockerfile
+    dockerContext: /  # Match example's root context
+    dockerfilePath: ./Dockerfile  # Use example's Dockerfile path
     envVars:
       - key: PORT
         value: 10000
@@ -41,6 +43,7 @@ services:
           name: minio-server
           type: web
           envVarKey: CONSOLE_PORT
+    autoDeploy: false  # Add as per example
 
   - type: web
     name: ragflow-web
@@ -48,12 +51,9 @@ services:
     runtime: docker
     dockerfilePath: Dockerfile
     numInstances: 1
-    healthCheckPath: /health
-    healthCheckPolicy:
-      timeoutSeconds: 20
-      intervalSeconds: 10
-      healthyThreshold: 3
-      unhealthyThreshold: 3
+    healthCheckPath: /health  # Direct property
+    healthCheckTimeoutSeconds: 20  # Top-level timeout
+    healthCheckIntervalSeconds: 10  # Top-level interval
     disk:
       name: docstore
       mountPath: /ragflow/storage
