@@ -51,9 +51,11 @@ services:
     runtime: docker
     dockerfilePath: Dockerfile
     numInstances: 1
-    healthCheckPath: /health  # Direct property
-    healthCheckTimeoutSeconds: 20  # Top-level timeout
-    healthCheckIntervalSeconds: 10  # Top-level interval
+    healthCheckPath: /health
+    advanced:
+      healthCheck:
+        timeoutSeconds: 20
+        intervalSeconds: 10
     disk:
       name: docstore
       mountPath: /ragflow/storage
